@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Digitalisasi Perpustakaan, DDC, dan DCMES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-100 min-h-full flex flex-col justify-between font-sans">
+
+    <!-- Header / Navbar -->
+    <header class="w-full bg-slate-900/80 backdrop-blur border-b border-slate-800 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToHome()">
+                <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                    <i data-lucide="book-open-check" class="w-6 h-6"></i>
+                </div>
+                <h1 class="font-bold text-lg sm:text-xl tracking-tight text-white">Kuis Digitalisasi Perpustakaan, DDC, dan DCMES</h1>
+            </div>
+            <div id="header-stats" class="hidden text-sm text-slate-400 font-medium">
+                Soal <span id="current-q-num" class="text-indigo-400 font-bold">1</span> dari <span id="total-q-num">15</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-auto">
+        <div class="w-full max-w-2xl bg-slate-800/60 backdrop-blur-md border border-slate-700/60 rounded-3xl shadow-2xl p-6 sm:p-10 transition-all duration-300">
+
+            <!-- HOME VIEW -->
+            <div id="home-view" class="text-center space-y-6">
+                <div class="inline-flex bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide">
+                    Evaluasi Kompetensi Pustakawan & Mahasiswa ILPUS
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    Kuis Digitalisasi Perpustakaan, DDC, dan DCMES
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
+                    Uji pemahaman Anda mengenai teknologi perpustakaan digital, klasifikasi persepuluhan Dewey (DDC), serta standar metadata Dublin Core (DCMES) dalam 15 pertanyaan komprehensif.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-left max-w-md mx-auto">
+                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/40">
+                        <i data-lucide="layers" class="w-5 h-5 text-indigo-400 mb-2"></i>
+                        <h4 class="font-bold text-sm text-white">15 Soal</h4>
+                        <p class="text-xs text-slate-400">Pilihan Ganda (4 Opsi)</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/40">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-indigo-400 mb-2"></i>
+                        <h4 class="font-bold text-sm text-white">Pembahasan</h4>
+                        <p class="text-xs text-slate-400">Penjelasan tiap opsi</p>
+                    </div>
+                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/40">
+                        <i data-lucide="award" class="w-5 h-5 text-indigo-400 mb-2"></i>
+                        <h4 class="font-bold text-sm text-white">Skor Akhir</h4>
+                        <p class="text-xs text-slate-400">Evaluasi instan</p>
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-600/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2 mx-auto">
+                        <span>Mulai Kuis Sekarang</span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- QUIZ VIEW -->
+            <div id="quiz-view" class="hidden space-y-6">
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+
+                <!-- Question Header -->
+                <div class="flex items-center justify-between text-xs sm:text-sm text-slate-400">
+                    <span id="question-tag" class="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-medium">Topik</span>
+                    <span id="question-counter">Pertanyaan 1 dari 15</span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="question-text" class="text-lg sm:text-xl font-bold text-white leading-relaxed">
+                    Pertanyaan akan muncul di sini...
+                </h3>
+
+                <!-- Options List -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Opsi akan dirender lewat JavaScript -->
+                </div>
+
+                <!-- Rationale Box (Hidden by default) -->
+                <div id="rationale-box" class="hidden bg-slate-900/80 border border-slate-700 p-4 rounded-xl space-y-2">
+                    <div class="flex items-center space-x-2 text-sm font-bold" id="rationale-title">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span>Pembahasan</span>
+                    </div>
+                    <p id="rationale-text" class="text-sm text-slate-300 leading-relaxed"></p>
+                </div>
+
+                <!-- Action Button -->
+                <div class="pt-2 flex justify-end">
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center space-x-2">
+                        <span id="next-btn-text">Selanjutnya</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RESULT VIEW -->
+            <div id="result-view" class="hidden text-center space-y-6">
+                <div class="w-20 h-20 bg-indigo-600/20 text-indigo-400 rounded-3xl mx-auto flex items-center justify-center border border-indigo-500/30 shadow-xl">
+                    <i data-lucide="trophy" class="w-10 h-10"></i>
+                </div>
+                <div class="space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Kuis Selesai!</h2>
+                    <p class="text-slate-300">Berikut adalah rekam jejak hasil evaluasi kuis Anda.</p>
+                </div>
+                
+                <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-700/60 max-w-sm mx-auto space-y-4">
+                    <div class="text-4xl font-black text-white" id="final-score-text">0 / 15</div>
+                    <p class="text-sm text-slate-400" id="score-message">Luar biasa! Pemahaman Anda sangat mendalam.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <button onclick="restartQuiz()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Ulangi Kuis</span>
+                    </button>
+                    <button onclick="goToHome()" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="home" class="w-4 h-4"></i>
+                        <span>Kembali ke Beranda</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-6 text-xs text-slate-500 border-t border-slate-800/80">
+        Kuis Digitalisasi Perpustakaan, DDC, dan DCMES &copy; 2026. All rights reserved.
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        const quizData = [
+            {
+                questionNumber: 1,
+                question: "Apa tujuan utama dari proses digitalisasi koleksi langka di perpustakaan?",
+                tags: ["Digitalisasi Perpustakaan"],
+                answerOptions: [
+                    {
+                        text: "Menghapus kebutuhan akan koleksi fisik di rak perpustakaan",
+                        isCorrect: false,
+                        rationale: "Digitalisasi bertujuan melestarikan dan memperluas akses, bukan menghilangkan koleksi fisik aslinya yang tetap memiliki nilai historis."
+                    },
+                    {
+                        text: "Melestarikan bahan pustaka rentan dan memperluas aksesibilitas jarak jauh",
+                        isCorrect: true,
+                        rationale: "Digitalisasi berfungsi ganda untuk preservasi preventif terhadap fisik yang rapuh serta mempermudah akses bagi pengguna tanpa batas geografis."
+                    },
+                    {
+                        text: "Meningkatkan anggaran operasional tahunan perpustakaan secara drastis",
+                        isCorrect: false,
+                        rationale: "Digitalisasi justru membutuhkan investasi awal yang cukup besar, bukan sarana langsung untuk menaikkan anggaran."
+                    },
+                    {
+                        text: "Mengganti seluruh peran pustakawan dengan sistem kecerdasan buatan",
+                        isCorrect: false,
+                        rationale: "Peran pustakawan tetap krusial dalam kurasi, manajemen metadata, dan pelayanan informasi digital."
+                    }
+                ],
+                hint: "Pikirkan tentang keamanan fisik buku tua dan kemudahan pembaca mengaksesnya."
+            },
+            {
+                questionNumber: 2,
+                question: "Format arsip digital manakah yang paling direkomendasikan untuk pelestarian jangka panjang dokumen teks pindaian?",
+                tags: ["Digitalisasi Perpustakaan"],
+                answerOptions: [
+                    {
+                        text: "PDF/A",
+                        isCorrect: true,
+                        rationale: "PDF/A adalah standar ISO khusus untuk pengarsipan jangka panjang yang melarang fitur eksternal yang dapat kedaluwarsa."
+                    },
+                    {
+                        text: "Microsoft Word (.docx)",
+                        isCorrect: false,
+                        rationale: "Format .docx rentan terhadap perubahan tata letak dan ketergantungan pada perangkat lunak komersial tertentu."
+                    },
+                    {
+                        text: "JPEG dengan kompresi tinggi",
+                        isCorrect: false,
+                        rationale: "JPEG mengalami penurunan kualitas (lossy compression) dan kurang optimal untuk dokumen teks berlapis."
+                    },
+                    {
+                        text: "GIF animasi",
+                        isCorrect: false,
+                        rationale: "GIF memiliki batasan warna 8-bit dan sama sekali bukan format standar pengarsipan teks."
+                    }
+                ],
+                hint: "Format ini merupakan standar ISO khusus pengarsipan dokumen elektronik."
+            },
+            {
+                questionNumber: 3,
+                question: "Dalam konteks perpustakaan digital, apa yang dimaksud dengan istilah 'Preservasi Digital'?",
+                tags: ["Digitalisasi Perpustakaan"],
+                answerOptions: [
+                    {
+                        text: "Menjual koleksi digital kepada pihak komersial demi keuntungan",
+                        isCorrect: false,
+                        rationale: "Preservasi berfokus pada pelestarian akses dan integritas data, bukan komersialisasi komersial."
+                    },
+                    {
+                        text: "Menjaga agar objek digital tetap dapat diakses dan dibaca di masa depan dari ancaman keusangan teknologi",
+                        isCorrect: true,
+                        rationale: "Preservasi digital mencakup strategi migrasi dan emulasi agar data digital terhindar dari kerusakan media atau keusangan format."
+                    },
+                    {
+                        text: "Menyimpan buku fisik di dalam ruangan ber-AC dengan suhu rendah",
+                        isCorrect: false,
+                        rationale: "Itu adalah preservasi preventif bahan pustaka fisik, bukan preservasi digital."
+                    },
+                    {
+                        text: "Membuat salinan cadangan tanpa memperhatikan format masa depan",
+                        isCorrect: false,
+                        rationale: "Cadangan saja tidak cukup jika format file menjadi usang dan tidak didukung perangkat lunak baru."
+                    }
+                ],
+                hint: "Fokus utamanya adalah mengatasi keusangan teknologi perangkat keras dan lunak."
+            },
+            {
+                questionNumber: 4,
+                question: "Siapakah tokoh yang merancang sistem klasifikasi Dewey Decimal Classification (DDC)?",
+                tags: ["DDC"],
+                answerOptions: [
+                    {
+                        text: "Charles Ammi Cutter",
+                        isCorrect: false,
+                        rationale: "Charles Ammi Cutter adalah pencipta sistem Cutter Expansive Classification."
+                    },
+                    {
+                        text: "Melvil Dewey",
+                        isCorrect: true,
+                        rationale: "Melvil Dewey memperkenalkan sistem DDC pertama kali pada tahun 1876 yang membagi ilmu pengetahuan menjadi 10 kelas utama."
+                    },
+                    {
+                        text: "Paul Otlet",
+                        isCorrect: false,
+                        rationale: "Paul Otlet adalah tokoh di balik Universal Decimal Classification (UDC) bersama Henri La Fontaine."
+                    },
+                    {
+                        text: "S.R. Ranganathan",
+                        isCorrect: false,
+                        rationale: "S.R. Ranganathan adalah pencipta Colon Classification dan hukum perpustakaan."
+                    }
+                ],
+                hint: "Nama sistem klasifikasi ini diambil langsung dari nama belakang sang penciptanya."
+            },
+            {
+                questionNumber: 5,
+                question: "Berapa jumlah kelas utama dalam sistem klasifikasi Dewey Decimal Classification (DDC)?",
+                tags: ["DDC"],
+                answerOptions: [
+                    {
+                        text: "5 kelas utama",
+                        isCorrect: false,
+                        rationale: "Jumlah kelas utama DDC bukan 5."
+                    },
+                    {
+                        text: "10 kelas utama",
+                        isCorrect: true,
+                        rationale: "DDC membagi seluruh ilmu pengetahuan menjadi 10 kelas utama, mulai dari 000 hingga 900."
+                    },
+                    {
+                        text: "20 kelas utama",
+                        isCorrect: false,
+                        rationale: "Angka tersebut tidak sesuai dengan struktur dasar pembagian utama DDC."
+                    },
+                    {
+                        text: "100 kelas utama",
+                        isCorrect: false,
+                        rationale: "100 adalah pembagian tingkat kedua (divisions), bukan kelas utama."
+                    }
+                ],
+                hint: "Sistem ini berbasis desimal, dimulai dari 000 sampai 900."
+            },
+            {
+                questionNumber: 6,
+                question: "Dalam pembagian DDC, nomor berapakah yang mencakup bidang Ilmu Komputer, Informasi, dan Karya Umum?",
+                tags: ["DDC"],
+                answerOptions: [
+                    {
+                        text: "000 - 099",
+                        isCorrect: true,
+                        rationale: "Kelas 000 dialokasikan untuk Karya Umum, Ilmu Komputer, dan Informasi."
+                    },
+                    {
+                        text: "100 - 199",
+                        isCorrect: false,
+                        rationale: "Kelas 100 diperuntukkan bagi bidang Filsafat dan Psikologi."
+                    },
+                    {
+                        text: "300 - 399",
+                        isCorrect: false,
+                        rationale: "Kelas 300 diperuntukkan bagi Ilmu-ilmu Sosial."
+                    },
+                    {
+                        text: "500 - 599",
+                        isCorrect: false,
+                        rationale: "Kelas 500 diperuntukkan bagi Ilmu-ilmu Murni / Sains."
+                    }
+                ],
+                hint: "Ini adalah kelompok nomor awal sebelum kelas filsafat."
+            },
+            {
+                questionNumber: 7,
+                question: "Manakah nomor DDC yang secara tepat menunjukkan kelompok bidang Kesusastraan (Literature)?",
+                tags: ["DDC"],
+                answerOptions: [
+                    {
+                        text: "400 - 499",
+                        isCorrect: false,
+                        rationale: "Kelas 400 adalah untuk bidang Bahasa (Language)."
+                    },
+                    {
+                        text: "800 - 899",
+                        isCorrect: true,
+                        rationale: "Kelas 800 secara khusus menampung karya sastra, retorika, dan kritik sastra."
+                    },
+                    {
+                        text: "700 - 799",
+                        isCorrect: false,
+                        rationale: "Kelas 700 adalah untuk Kesenian dan Rekreasi (Arts & Recreation)."
+                    },
+                    {
+                        text: "900 - 999",
+                        isCorrect: false,
+                        rationale: "Kelas 900 adalah untuk Sejarah, Geografi, dan Biografi."
+                    }
+                ],
+                hint: "Letaknya berada di antara kelas seni dan kelas sejarah."
+            },
+            {
+                questionNumber: 8,
+                question: "Apa kepanjangan dari DCMES dalam dunia perpustakaan dan informasi?",
+                tags: ["DCMES"],
+                answerOptions: [
+                    {
+                        text: "Dublin Core Metadata Element Set",
+                        isCorrect: true,
+                        rationale: "DCMES adalah standar metadata ringkas yang dikembangkan untuk mendeskripsikan sumber daya digital."
+                    },
+                    {
+                        text: "Digital Cataloging and Metadata Electronic System",
+                        isCorrect: false,
+                        rationale: "Pilihan ini adalah pengecoh yang tidak sesuai dengan standar Dublin Core."
+                    },
+                    {
+                        text: "Document Classification and Metadata Exchange Standard",
+                        isCorrect: false,
+                        rationale: "Bukan merupakan kepanjangan resmi Dublin Core."
+                    },
+                    {
+                        text: "Dublin Center for Modern Electronic Storage",
+                        isCorrect: false,
+                        rationale: "Dublin Core dinamai berdasarkan kota tempat lokakarya pertamanya di Dublin, Ohio, bukan pusat penyimpanan."
+                    }
+                ],
+                hint: "Standar metadata ini dinamai sesuai kota tempat lokakarya awalnya di Ohio, AS."
+            },
+            {
+                questionNumber: 9,
+                question: "Berapa jumlah elemen inti (core elements) yang terdapat dalam Dublin Core Metadata Element Set (DCMES) standar?",
+                tags: ["DCMES"],
+                answerOptions: [
+                    {
+                        text: "10 elemen",
+                        isCorrect: false,
+                        rationale: "Jumlah elemen standar DCMES bukan 10."
+                    },
+                    {
+                        text: "12 elemen",
+                        isCorrect: false,
+                        rationale: "Jumlah elemen standar DCMES bukan 12."
+                    },
+                    {
+                        text: "15 elemen",
+                        isCorrect: true,
+                        rationale: "DCMES terdiri dari 15 elemen dasar yang bersifat opsional dan dapat diulang."
+                    },
+                    {
+                        text: "20 elemen",
+                        isCorrect: false,
+                        rationale: "Jumlah tersebut melebihi spesifikasi inti DCMES."
+                    }
+                ],
+                hint: "Jumlahnya lebih banyak dari jumlah kelas utama DDC, yaitu 15."
+            },
+            {
+                questionNumber: 10,
+                question: "Manakah di bawah ini yang termasuk salah satu elemen dalam Dublin Core?",
+                tags: ["DCMES"],
+                answerOptions: [
+                    {
+                        text: "Creator (Pencipta)",
+                        isCorrect: true,
+                        rationale: "Creator adalah salah satu dari 15 elemen inti Dublin Core untuk menyatakan entitas yang bertanggung jawab atas pembuatan konten."
+                    },
+                    {
+                        text: "DeweyNumber (Nomor Dewey)",
+                        isCorrect: false,
+                        rationale: "Nomor klasifikasi DDC bukan bagian dari elemen inti Dublin Core."
+                    },
+                    {
+                        text: "BookBinding (Jenis Jilid Buku)",
+                        isCorrect: false,
+                        rationale: "Dublin Core lebih berfokus pada konten dan sumber daya digital, bukan detail fisik jilid."
+                    },
+                    {
+                        text: "LibraryBranch (Cabang Perpustakaan)",
+                        isCorrect: false,
+                        rationale: "Informasi lokasi fisik perpustakaan tidak termasuk dalam 15 elemen inti DCMES."
+                    }
+                ],
+                hint: "Elemen ini menunjukkan pihak atau orang yang menciptakan sumber daya."
+            },
+            {
+                questionNumber: 11,
+                question: "Apa sifat utama dari elemen-elemen dalam Dublin Core Metadata Element Set?",
+                tags: ["DCMES"],
+                answerOptions: [
+                    {
+                        text: "Wajib diisi seluruhnya dan tidak boleh diulang",
+                        isCorrect: false,
+                        rationale: "Semua elemen Dublin Core bersifat opsional (optional) dan dapat diulang (repeatable)."
+                    },
+                    {
+                        text: "Opsional (optional) dan dapat diulang (repeatable)",
+                        isCorrect: true,
+                        rationale: "Fleksibilitas tinggi menjadi ciri khas Dublin Core di mana kreator bisa mengisi elemen yang relevan saja."
+                    },
+                    {
+                        text: "Hanya khusus digunakan untuk koleksi manuskrip kuno",
+                        isCorrect: false,
+                        rationale: "Dublin Core dirancang universal untuk berbagai sumber daya lintas disiplin ilmu."
+                    },
+                    {
+                        text: "Harus menggunakan bahasa Inggris baku internasional",
+                        isCorrect: false,
+                        rationale: "Dublin Core mendukung berbagai bahasa melalui atribut kualifikasi bahasa."
+                    }
+                ],
+                hint: "Standar ini dirancang fleksibel agar mudah diterapkan pada berbagai jenis objek."
+            },
+            {
+                questionNumber: 12,
+                question: "Dalam DCMES, elemen manakah yang digunakan untuk mencatat tanggal publikasi atau penerbitan dokumen?",
+                tags: ["DCMES"],
+                answerOptions: [
+                    {
+                        text: "Date",
+                        isCorrect: true,
+                        rationale: "Elemen Date digunakan untuk merekam tanggal yang berkaitan dengan siklus hidup sumber daya (termasuk tanggal publikasi)."
+                    },
+                    {
+                        text: "Time",
+                        isCorrect: false,
+                        rationale: "Time bukan merupakan elemen inti dalam DCMES."
+                    },
+                    {
+                        text: "Publisher",
+                        isCorrect: false,
+                        rationale: "Publisher merujuk pada entitas yang menerbitkan sumber daya, bukan tanggalnya."
+                    },
+                    {
+                        text: "Period",
+                        isCorrect: false,
+                        rationale: "Period tidak ada dalam daftar 15 elemen inti DCMES."
+                    }
+                ],
+                hint: "Nama elemennya sangat sederhana dalam bahasa Inggris, merujuk pada waktu/tanggal."
+            },
+            {
+                questionNumber: 13,
+                question: "Apa tantangan terbesar dalam proses migrasi data dari sistem perpustakaan konvensional ke digital?",
+                tags: ["Digitalisasi Perpustakaan"],
+                answerOptions: [
+                    {
+                        text: "Standarisasi metadata dan kualitas pindaian yang buruk",
+                        isCorrect: true,
+                        rationale: "Inkonsistensi metadata dan hasil pindai yang kurang terbaca (OCR buruk) menjadi kendala utama dalam temu kembali informasi."
+                    },
+                    {
+                        text: "Terlalu sedikitnya standar format file di dunia",
+                        isCorrect: false,
+                        rationale: "Justriptnya terlalu banyak standar format yang beragam justru menjadi tantangan tersendiri."
+                    },
+                    {
+                        text: "Ketiadaan komputer di seluruh dunia",
+                        isCorrect: false,
+                        rationale: "Perangkat komputer dan infrastruktur TIK saat ini sudah sangat masif."
+                    },
+                    {
+                        text: "Masyarakat menolak membaca secara digital secara mutlak",
+                        isCorrect: false,
+                        rationale: "Minat baca digital justru terus meningkat seiring kebutuhan mobilitas."
+                    }
+                ],
+                hint: "Terkait dengan keseragaman data deskriptif dan kualitas visual dokumen."
+            },
+            {
+                questionNumber: 14,
+                question: "Manakah pembagian tingkat kedua (divisions) dalam DDC yang mewakili ilmu kedokteran dan kesehatan?",
+                tags: ["DDC"],
+                answerOptions: [
+                    {
+                        text: "600 - 699 (Teknologi / Ilmu Terapan)",
+                        isCorrect: true,
+                        rationale: "Ilmu kedokteran berada di bawah kelas utama Teknologi (600), tepatnya pada kisaran nomor 610."
+                    },
+                    {
+                        text: "500 - 599 (Ilmu Murni)",
+                        isCorrect: false,
+                        rationale: "Ilmu murni mencakup matematika, fisika, kimia, biologi dasar, bukan kedokteran klinis."
+                    },
+                    {
+                        text: "300 - 399 (Ilmu Sosial)",
+                        isCorrect: false,
+                        rationale: "Kelas 300 mencakup sosiologi, ekonomi, hukum, dan pendidikan."
+                    },
+                    {
+                        text: "700 - 799 (Kesenian)",
+                        isCorrect: false,
+                        rationale: "Kelas 700 mencakup seni rupa, musik, dan olahraga."
+                    }
+                ],
+                hint: "Kedokteran dipandang sebagai ilmu terapan dalam struktur DDC."
+            },
+            {
+                questionNumber: 15,
+                question: "Apa fungsi utama dari elemen 'Subject' dalam Dublin Core?",
+                tags: ["DCMES"],
+                answerOptions: [
+                    {
+                        text: "Menjelaskan topik atau isi utama dari sumber daya informasi",
+                        isCorrect: true,
+                        rationale: "Elemen Subject biasanya diisi dengan kata kunci, istilah indeks, atau nomor klasifikasi yang merangkum isi dokumen."
+                    },
+                    {
+                        text: "Menyebutkan nama pembuat dokumen",
+                        isCorrect: false,
+                        rationale: "Nama pembuat dokumen dicakup oleh elemen Creator."
+                    },
+                    {
+                        text: "Menentukan format file digital",
+                        isCorrect: false,
+                        rationale: "Format file digital dicakup oleh elemen Format."
+                    },
+                    {
+                        text: "Menyatakan batasan hak cipta",
+                        isCorrect: false,
+                        rationale: "Batasan hak cipta dicakup oleh elemen Rights."
+                    }
+                ],
+                hint: "Elemen ini merepresentasikan isi pokok atau kata kunci bahasan materi."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let isAnswered = false;
+
+        const homeView = document.getElementById('home-view');
+        const quizView = document.getElementById('quiz-view');
+        const resultView = document.getElementById('result-view');
+        const headerStats = document.getElementById('header-stats');
+        const currentQNumSpan = document.getElementById('current-q-num');
+        const totalQNumSpan = document.getElementById('total-q-num');
+        const progressBar = document.getElementById('progress-bar');
+        const questionTag = document.getElementById('question-tag');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const rationaleBox = document.getElementById('rationale-box');
+        const rationaleText = document.getElementById('rationale-text');
+        const nextBtn = document.getElementById('next-btn');
+        const nextBtnText = document.getElementById('next-btn-text');
+        const finalScoreText = document.getElementById('final-score-text');
+        const scoreMessage = document.getElementById('score-message');
+
+        totalQNumSpan.textContent = quizData.length;
+
+        function goToHome() {
+            homeView.classList.remove('hidden');
+            quizView.classList.add('hidden');
+            resultView.classList.add('hidden');
+            headerStats.classList.add('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+        }
+
+        function startQuiz() {
+            homeView.classList.add('hidden');
+            quizView.classList.remove('hidden');
+            resultView.classList.add('hidden');
+            headerStats.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = quizData[currentQuestionIndex];
+            currentQNumSpan.textContent = currentQuestionIndex + 1;
+            progressBar.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+            
+            questionTag.textContent = q.tags[0] || 'Umum';
+            questionText.textContent = q.question;
+            rationaleBox.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+
+            optionsContainer.innerHTML = '';
+            q.answerOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-700/80 bg-slate-900/40 hover:bg-slate-700/40 hover:border-indigo-500/50 transition-all text-slate-200 font-medium text-sm sm:text-base flex items-center justify-between group";
+                btn.innerHTML = `<span>${opt.text}</span><span class="w-6 h-6 rounded-full border border-slate-600 flex items-center justify-center text-xs text-slate-400 group-hover:border-indigo-400 group-hover:text-indigo-300">${String.fromCharCode(65 + idx)}</span>`;
+                btn.onclick = () => selectOption(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = quizData[currentQuestionIndex];
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            const optionButtons = optionsContainer.children;
+            
+            q.answerOptions.forEach((opt, idx) => {
+                const btn = optionButtons[idx];
+                btn.disabled = true;
+                if (opt.isCorrect) {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/30 text-emerald-200 font-medium text-sm sm:text-base flex items-center justify-between";
+                } else if (idx === selectedIndex) {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-rose-500/50 bg-rose-950/30 text-rose-200 font-medium text-sm sm:text-base flex items-center justify-between";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-900/20 text-slate-500 font-medium text-sm sm:text-base flex items-center justify-between opacity-50";
+                }
+            });
+
+            if (q.answerOptions[selectedIndex].isCorrect) {
+                score++;
+            }
+
+            // Tampilkan Rationale
+            rationaleText.textContent = q.answerOptions[selectedIndex].rationale || "Penjelasan jawaban terkait materi.";
+            rationaleBox.classList.remove('hidden');
+
+            // Atur tombol selanjutnya
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtnText.textContent = "Lihat Hasil Kuis";
+            } else {
+                nextBtnText.textContent = "Selanjutnya";
+            }
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            quizView.classList.add('hidden');
+            resultView.classList.remove('hidden');
+            headerStats.classList.add('hidden');
+
+            finalScoreText.textContent = `${score} / ${quizData.length}`;
+            
+            let percentage = (score / quizData.length) * 100;
+            if (percentage === 100) {
+                scoreMessage.textContent = "Sempurna! Anda menguasai materi digitalisasi perpustakaan, DDC, dan DCMES secara paripurna.";
+            } else if (percentage >= 80) {
+                scoreMessage.textContent = "Luar biasa! Pemahaman Anda sangat mendalam dan akurat.";
+            } else if (percentage >= 60) {
+                scoreMessage.textContent = "Cukup baik! Pertahankan dan terus tingkatkan pemahaman Anda.";
+            } else {
+                scoreMessage.textContent = "Tetap semangat! Pelajari kembali materi terkait untuk hasil yang lebih optimal.";
+            }
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        // Inisialisasi ikon Lucide
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
